@@ -255,8 +255,8 @@ for (i in 1:nsims){
 	li1<-paste(ms," ",as.character(6*as.numeric(nchr))," ",as.character(nloci)," -t ",as.character(tnAR[i])," -r ",as.character(srec[i])," ",as.character(ll)," -IT 3 11 ","0 0 0 0 0 0 ",nchr," 0 0 ",nchr," ",nchr," ",nchr," ",as.character(sstD[i])," 0 ",nchr," 0 0 0 0 0 0 0 0 0 ",as.character(sstN[i])," 0 0 0 ",nchr," 0 0 0 0 0 0 0 -n 6 ",as.character(snY[i])," -n 7 ",as.character(snG1[i])," -n 8 ",as.character(snG2[i])," -n 9 ",as.character(snE[i])," -n 10 ",as.character(snA[i])," -n 11 ",as.character(snP[i])," -m 6 7 ",as.character(m67[i])," -m 7 6 ",as.character(m76[i])," -m 7 8 ",as.character(m78[i])," -m 8 7 ",as.character(m87[i])," -m 6 8 ",as.character(m68[i])," -m 8 6 ",as.character(m86[i])," -m 8 9 ",as.character(m89[i])," -m 9 8 ",as.character(m98[i])," -m 9 10 ",as.character(m910[i])," -m 10 9 ",as.character(m109[i])," -m 10 11 ",as.character(m1011[i])," -m 11 10 ",as.character(m1110[i]),part1,sep="")
 	#print (c(staNEA[i],staDP[i],staARP[i]))
 	if (i==1){
-		system(paste(li1," | ",cpd,"compute_pd.py -np 6 -nc ",nchr," -w 30 -b 50 -s > ",out,".tab",sep=""))
+		system(paste(li1," | ",cpd,"compute_ss.py -np 6 -nc ",nchr," -w 30 -b 50 -s > ",out,".tab",sep=""))
 	}else{
-		system(paste(li1," | ",cpd,"compute_pd.py -np 6 -nc ",nchr," -w 30 -b 50 -s >> ",out,".tab",sep=""))
+		system(paste(li1," | ",cpd,"compute_ss.py -np 6 -nc ",nchr," -w 30 -b 50 -s >> ",out,".tab",sep=""))
 	}
 }

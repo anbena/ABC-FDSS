@@ -32,13 +32,13 @@ partablescaled<-cbind(tn1,rn2,tds,tds,rna,m12,m21,srec)
 write.table(partable,paste(out,".param",sep=""),row.names=F,quote=F,sep="\t")
 write.table(partablescaled,paste(out,".paramscaled",sep=""),row.names=F,col.names=T,quote=F,sep="\t")
 i<-1
-write(paste(ms," ",as.character(2*as.numeric(nchr))," ",as.character(nloci)," -t ",as.character(tn1[i])," -r ",as.character(srec[i])," ",as.character(ll)," -I 2 ",nchr," ",nchr," -n 2 ",as.character(rn2[i])," -m 1 2 ",as.character(m12[i])," -m 2 1 ",as.character(m21[i])," -ej ",as.character(tds[i])," 2 1 -en ",as.character(tds[i])," 1 ",as.character(rna[i]),"| ",cpd,"compute_pd.py -np 2 -nc ",nchr," -w 30 -b 50 -s > ",out,".tab",sep=""), stderr())
+write(paste(ms," ",as.character(2*as.numeric(nchr))," ",as.character(nloci)," -t ",as.character(tn1[i])," -r ",as.character(srec[i])," ",as.character(ll)," -I 2 ",nchr," ",nchr," -n 2 ",as.character(rn2[i])," -m 1 2 ",as.character(m12[i])," -m 2 1 ",as.character(m21[i])," -ej ",as.character(tds[i])," 2 1 -en ",as.character(tds[i])," 1 ",as.character(rna[i]),"| ",cpd,"compute_ss.py -np 2 -nc ",nchr," -w 30 -b 50 -s > ",out,".tab",sep=""), stderr())
 for (i in 1:nsims){
 	print(i)
 	if (i==1){
-		system(paste(ms," ",as.character(2*as.numeric(nchr))," ",as.character(nloci)," -t ",as.character(tn1[i])," -r ",as.character(srec[i])," ",as.character(ll)," -I 2 ",nchr," ",nchr," -n 2 ",as.character(rn2[i])," -m 1 2 ",as.character(m12[i])," -m 2 1 ",as.character(m21[i])," -ej ",as.character(tds[i])," 2 1 -en ",as.character(tds[i])," 1 ",as.character(rna[i]),"| ",cpd,"compute_pd.py -np 2 -nc ",nchr," -w 30 -b 50 -s > ",out,".tab",sep=""))
+		system(paste(ms," ",as.character(2*as.numeric(nchr))," ",as.character(nloci)," -t ",as.character(tn1[i])," -r ",as.character(srec[i])," ",as.character(ll)," -I 2 ",nchr," ",nchr," -n 2 ",as.character(rn2[i])," -m 1 2 ",as.character(m12[i])," -m 2 1 ",as.character(m21[i])," -ej ",as.character(tds[i])," 2 1 -en ",as.character(tds[i])," 1 ",as.character(rna[i]),"| ",cpd,"compute_ss.py -np 2 -nc ",nchr," -w 30 -b 50 -s > ",out,".tab",sep=""))
 	}
 	else{
-		system(paste(ms," ",as.character(2*as.numeric(nchr))," ",as.character(nloci)," -t ",as.character(tn1[i])," -r ",as.character(srec[i])," ",as.character(ll)," -I 2 ",nchr," ",nchr," -n 2 ",as.character(rn2[i])," -m 1 2 ",as.character(m12[i])," -m 2 1 ",as.character(m21[i])," -ej ",as.character(tds[i])," 2 1 -en ",as.character(tds[i])," 1 ",as.character(rna[i]),"| ",cpd,"compute_pd.py -np 2 -nc ",nchr," -w 30 -b 50 -s >> ",out,".tab",sep=""))
+		system(paste(ms," ",as.character(2*as.numeric(nchr))," ",as.character(nloci)," -t ",as.character(tn1[i])," -r ",as.character(srec[i])," ",as.character(ll)," -I 2 ",nchr," ",nchr," -n 2 ",as.character(rn2[i])," -m 1 2 ",as.character(m12[i])," -m 2 1 ",as.character(m21[i])," -ej ",as.character(tds[i])," 2 1 -en ",as.character(tds[i])," 1 ",as.character(rna[i]),"| ",cpd,"compute_ss.py -np 2 -nc ",nchr," -w 30 -b 50 -s >> ",out,".tab",sep=""))
 	}
 }

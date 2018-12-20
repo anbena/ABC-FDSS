@@ -24,13 +24,13 @@ partablescaled<-cbind(tn1,tn1,srec)
 write.table(partable,paste(out,".param",sep=""),row.names=F,quote=F,sep="\t")
 write.table(partablescaled,paste(out,".paramscaled",sep=""),row.names=F,col.names=T,quote=F,sep="\t")
 i<-1
-write(paste(ms," ",as.character(nchr)," ",as.character(nloci)," -t ",as.character(tn1[i])," -r ",as.character(srec[i])," ",as.character(ll)," | ",cpd,"compute_pd.py -np 1 -nc ",nchr," -w 100 -b 20 > ",out,".tab",sep=""),stderr())
+write(paste(ms," ",as.character(nchr)," ",as.character(nloci)," -t ",as.character(tn1[i])," -r ",as.character(srec[i])," ",as.character(ll)," | ",cpd,"compute_ss.py -np 1 -nc ",nchr," -w 100 -b 20 > ",out,".tab",sep=""),stderr())
 for (i in 1:nsims){
 	print(i)
 	if (i==1){
-		system(paste(ms," ",as.character(nchr)," ",as.character(nloci)," -t ",as.character(tn1[i])," -r ",as.character(srec[i])," ",as.character(ll)," | ",cpd,"compute_pd.py -np 1 -nc ",nchr," -w 100 -b 20 > ",out,".tab",sep=""))
+		system(paste(ms," ",as.character(nchr)," ",as.character(nloci)," -t ",as.character(tn1[i])," -r ",as.character(srec[i])," ",as.character(ll)," | ",cpd,"compute_ss.py -np 1 -nc ",nchr," -w 100 -b 20 > ",out,".tab",sep=""))
 	}
 	else{
-		system(paste(ms," ",as.character(nchr)," ",as.character(nloci)," -t ",as.character(tn1[i])," -r ",as.character(srec[i])," ",as.character(ll)," | ",cpd,"compute_pd.py -np 1 -nc ",nchr," -w 100 -b 20 >> ",out,".tab",sep=""))
+		system(paste(ms," ",as.character(nchr)," ",as.character(nloci)," -t ",as.character(tn1[i])," -r ",as.character(srec[i])," ",as.character(ll)," | ",cpd,"compute_ss.py -np 1 -nc ",nchr," -w 100 -b 20 >> ",out,".tab",sep=""))
 	}
 }
