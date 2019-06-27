@@ -1,9 +1,9 @@
 ABC-SeS: ABC framework using random forest coupled with the FDSS or SFS
 
 The main compute_sfs.py script can:
-*-->Compute the FDSS within and between populations 
-*-->Compute the unfolded/folded site frequency spectrum within and between populations
-*-->Compute the number of differences between chr within and between populations
+* Compute the FDSS within and between populations 
+* Compute the unfolded/folded site frequency spectrum within and between populations
+* Compute the number of differences between chr within and between populations
 using SNPs simulated with Hudson's ms.
 
 Arguments:
