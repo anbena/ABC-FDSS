@@ -1,4 +1,6 @@
-ABC-FDSS: ABC framework using random forest coupled with the FDSS or SFS
+# ABC-FDSS: ABC framework using random forest coupled with the FDSS or SFS
+
+FDSS stands for Frequency Distribution of Segregating Sites. Briefly, it records the number of genomic loci of a fixed length showing a certain number of segregatin sites across individuals (from 0 (monomorphic) to a fixed maximum number n)
 
 The main compute_sfs.py script can:
 * Compute the FDSS within and between populations 
