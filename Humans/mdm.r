@@ -1,3 +1,6 @@
+#Multiple dispersal model
+#Rscript --vanilla ./mdm.r <nchr> <locuslength> <nlociXsim> <rec.rate=1.12e-8> <nsimulations>
+
 samp_int_vec<-function(x=1,y=1:10){
 #x is an integer, y is a vector
 out<-c()
@@ -24,22 +27,20 @@ for (i in 1:length(y)){
 return(out)
 }
 
-
-#wrapper script to simulate two population split with asymmetrical gene flow from divergence to the present
-#Rscript --vanilla ./ooa_m2.r <nchr> <locuslength> <nlociXsim> <recrate=1.12e-8> <nsimulations>
 args<-commandArgs(trailingOnly=TRUE)
 ms<-"/opt/software/genetics/msms/bin/msms"
 cpd<-"./"
-mod<-"ooa_m2"
+mod<-"mdm"
 nchr<-as.character(args[1])
 tgen<-29
 mu<-1.25e-8
-recomb<-as.numeric(args[4])
+recomb<-as.numeric(args[4])#recombination rate
 ll<-as.numeric(args[2])#locus length
 nsims<-as.numeric(args[5])#number of ABC simulations
 nloci<-as.numeric(args[3])#loci to simulate in each sim
 out<-paste(mod,"_ll",as.character(ll),"_nl",as.character(nloci),"_r",as.character(recomb),"_nc",nchr,sep="")
-#main param
+
+#Prior distributions parameters as in Malaspinas et al. 2016
 tbot<-2900
 stN<-85735
 stD<-67570
@@ -92,32 +93,32 @@ rEA<-1/runif(nsims,min=2,max=100)
 
 tdYG1<-sample(40000:145000,nsims,replace=T)
 tdYG2<-tdYG1
-#tdOA1<-sample(35000:tdYG1,nsims,replace=T)
+
 tdOA1<-samp_int_vec(40000,tdYG1)
 tOAbot1<-(tdOA1-tbot)
-#tdOA2<-sample(30000:tdOA1,nsims,replace=T)
+
 tdOA2<-samp_int_vec(35000,tOAbot1)                      
 tOAbot2<-(tdOA2-tbot)
-#tdEA<-sample(20000:tOAbot2,nsims,replace=T)
+
 tdEA<-samp_int_vec(20000,tOAbot2)
 
-#taNA<-sample(20000:tdEA,nsims,replace=T)
+
 taNA<-samp_int_vec(20000,tdEA)
 paNA<-runif(nsims, 10^-3, 10^-1)
 paNA<-1-paNA
-#taDP<-sample(30000:tOAbot1,nsims,replace=T) 
+
 taDP<-samp_int_vec(30000,tOAbot1)
 paDP<-runif(nsims, 10^-3, 10^-1)
 paDP<-1-paDP
-#taARP<-sample(taDP:tOAbot1,nsims,replace=T)
+
 taARP<-samp_vec_vec(taDP,tOAbot1)
 paARP<-runif(nsims, 10^-3, 10^-1)
 paARP<-1-paARP
-#taNEA<-sample(tdEA:tOAbot2,nsims,replace=T)
+
 taNEA<-samp_vec_vec(tdEA,tOAbot2)
 paNEA<-runif(nsims, 10^-3, 10^-1)
 paNEA<-1-paNEA
-#taNG2<-sample(tdOA2:tdYG2,nsims,replace=T)
+
 taNG2<-samp_vec_vec(tdOA2,tdYG2)
 paNG2<-runif(nsims, 10^-3, 10^-1)
 paNG2<-1-paNG2
@@ -129,7 +130,7 @@ tdADN<-580000
 tdAM<-638000
 
 
-#param transformations
+#Parameters transformation for msms simulator
 tnAR<-4*nAR*mu*ll
 snD<-nD*4*mu*ll/tnAR
 snDR<-nDR*4*mu*ll/tnAR
@@ -175,11 +176,14 @@ stdAM<-(tdAM/tgen)/(4*nAR)
 tm1<-(tdEA/tgen)/(4*nAR)
 srec<-4*nAR*(recomb*(ll-1))
 
+#Output: parameters files
 partable<-cbind(nAR,nD,nDR,nN,nNR,nY,nG1,nG2,nE,nA,nP,nYG,nNNR,nDDR,nDN,nADN,nAM,rYG,rNNR,rDDR,rNDN,rADN,rAM,rP,rEA,tdYG1,tdYG2,tdOA1,tdOA2,tOAbot1,tOAbot2,tdEA,taNA,paNA,taDP,paDP,taARP,paARP,taNEA,paNEA,taNG2,paNG2,stN,stD,tdNNR,tdDDR,tdDN,tdADN,tdAM)
 colnames(partable)<-c("nAR","nD","nDR","nN","nNR","nY","nG1","nG2","nE","nA","nP","nYG","nNNR","nDDR","nDN","nADN","nAM","rYG","rNNR","rDDR","rNDN","rADN","rAM","rP","rEA","tdYG1","tdYG2","tdOA1","tdOA2","tOAbot1","tOAbot2","tdEA","taNA","paNA","taDP","paDP","taARP","paARP","taNEA","paNEA","taNG2","paNG2","stN","stD","tdNNR","tdDDR","tdDN","tdADN","tdAM")
 partablescaled<-cbind(tnAR,snD,snDR,snN,snNR,snY,snG1,snG2,snE,snA,snP,snYG,snNNR,snDDR,snDN,snADN,snAM,srec,stdYG1,stdYG2,stdOA1,stdOA2,stOAbot1,stOAbot2,stdEA,staNA,staDP,staARP,staNEA,staNG2,sstN,sstD,stdNNR,stdDDR,stdDN,stdADN,stdAM,m67,m76,m78,m87,m89,m98,m910,m109,m1011,m1110,tm1,m1_89,m1_98,m1_911,m1_119)
 write.table(partable,paste(out,".param",sep=""),row.names=F,quote=F,sep="\t")
 write.table(partablescaled,paste(out,".paramscaled",sep=""),row.names=F,col.names=T,quote=F,sep="\t")
+
+#Output summary statistics: FDSS
 i<-1
 for (i in 1:nsims){	
 	s<-c()
