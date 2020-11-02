@@ -45,7 +45,7 @@ mod<-"mod_1b"
 nchr<-as.character(args[1])
 tgen<-25
 mu<-1.5e-8
-recomb<-as.numeric(args[4])
+recomb<-as.numeric(args[4])#recombination rate
 ll<-as.numeric(args[2])#locus length
 nsims<-as.numeric(args[5])#number of ABC simulations
 nloci<-as.numeric(args[3])#loci to simulate in each sim
