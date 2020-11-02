@@ -13,9 +13,9 @@ r<-as.character(args[3])
 chr<-as.character(args[4])
 
 parcomb<-length(ll)*length(nl)*length(r)*length(chr)
-ris<-matrix(ncol=7,nrow=parcomb)#rows=parcomb, columns=classification error, prior error rate, power and mean posterior probability
+ris<-matrix(ncol=7,nrow=parcomb)#rows=parcomb, columns=classification error, prior error rate, true positive rate and mean posterior probability (pods)
 colnames(ris)<-c("sdm_ClErr","mdm_ClErr","PriorErrRate","sdm_pow","mdm_pow","sdm_mpp","mdm_mpp")
-ris1<-matrix(ncol=4,nrow=pods)#model preferred and posterior probability for each model
+ris1<-matrix(ncol=4,nrow=pods)#model preferred and posterior probability for each model (pods)
 colnames(ris1)<-c("sdm_modind","sdm_postpr","mdm_modind","mdm_postpr")
 pc<-c()
 q<-0
@@ -46,7 +46,7 @@ for (locusl in ll){
                                 f<-apply(s,2,var)!=0
                                 da<-data.frame(i,s[,f])
                                 
-                                #Trining forest
+                                #Training forest
                                 a<-abcrf(i~.,data=da,lda=T,ntree=ntrees,paral=T,ncores=10)
                                 
                                 #Power SDM model
@@ -63,7 +63,7 @@ for (locusl in ll){
                                 v2<-sum(b$allocation==2)/length(b$allocation)
                                 p2<-mean(b$post.prob[b$allocation==2])
                                 
-                                #Output file power Out of Africa model
+                                #Output files power Out-of-Africa models
                                 k<-a$model.rf$confusion[,"class.error"]
                                 ris[q,]<-c(k[1],k[2],a$prior.err,v1,v2,p1,p2)
                                 write.table(ris1,paste("ll",locusl,"_nl",nloci,"_r",rec,"_nc",cr,"_FDSS.raw",sep=""),row.names=F,quote=F,sep="\t")
