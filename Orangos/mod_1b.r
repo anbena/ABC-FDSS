@@ -230,8 +230,8 @@ print(i)
 #print(li1)
 
 	if (i==1){
-		system(paste(li1," | ",cpd,"compute_ss.py -np 7 -nc ",nchr," -w 30 -b 100 -s > ",out,".1.tab",sep=""))
+		system(paste(li1," | ",cpd,"compute_ss.py -np 7 -nc ",nchr," -w 30 -b 100 -s > ",out,".tab",sep=""))
 	}else{
-		system(paste(li1," | ",cpd,"compute_ss.py -np 7 -nc ",nchr," -w 30 -b 100 -s >> ",out,".1.tab",sep=""))
+		system(paste(li1," | ",cpd,"compute_ss.py -np 7 -nc ",nchr," -w 30 -b 100 -s >> ",out,".tab",sep=""))
 	}
 }
