@@ -1,5 +1,5 @@
 #wrapper script to simulate one population bottleneck
-#Rscript --vanilla ./bott.r <nchr> <locuslength> <nlociXsim> <rec.rate=1.12e-8> <nsimulations>
+#Rscript --vanilla ./bott.r <nchr> <locuslength> <nlociXsim> <rec.rate=1e-8> <nsimulations>
 args<-commandArgs(trailingOnly=TRUE)
 ms<-"/opt/software/genetics/ms/ms"
 cpd<-"./"
@@ -24,7 +24,7 @@ tn1<-4*n1*mu*ll
 tbs<-(tb/tgen)/(4*n1)
 srec<-4*n1*(recomb*(ll-1))
 
-#Output parameters files
+#Output: parameters files
 partable<-cbind(n1,intensity,tb,na)
 colnames(partable)<-c("n1","intensity","tb","na")
 partablescaled<-cbind(tn1,tbs,srec)
