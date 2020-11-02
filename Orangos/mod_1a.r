@@ -39,7 +39,6 @@ for (i in 1:length(y)){
 return(out)
 }
 
-## MAIN 
 args<-commandArgs(trailingOnly=TRUE)
 ms<-"/opt/software/genetics/ms/ms"
 cpd<-"./"
@@ -47,13 +46,13 @@ mod<-"mod_1a"
 nchr<-as.character(args[1])
 tgen<-25
 mu<-1.5e-8
-recomb<-as.numeric(args[4])
+recomb<-as.numeric(args[4])#recombination rate
 ll<-as.numeric(args[2])#locus length
 nsims<-as.numeric(args[5])#number of ABC simulations
 nloci<-as.numeric(args[3])#loci to simulate in each sim
 out<-paste(mod,"_ll",as.character(ll),"_nl",as.character(nloci),"_r",as.character(recomb),"_nc",nchr,sep="")
 
-##PARAMETERS
+##Prior distributions parameters as in Nater et al. 2017
 
 #Ne Present Time
 Ne1BO<-sample(300:32000,nsims,replace=T) 
@@ -162,14 +161,14 @@ stBotST<-stBotNT
 ststrNT<-(tstrNT/tgen)/(4*Ne1BO)
 stsepNTST<-(tsepNTST/tgen)/(4*Ne1BO)
 
-
+#Output: parameters files
 partable<-cbind(Ne1BO,Ne2BO,Ne3BO,Ne4BO,NeST,Ne1NT,Ne2NT,MigBO,MigNT,Mig56,Mig65,Mig57,Mig75,MigSTNT,MigNTST,MigBOST,MigSTBO,NeancBO,rBO,NeancST,Neanc1NT,Neanc2NT,tsep4BO,BottDur,tbottend,tbotBO,tsepBOST,tStopMig,tBotNT,tBotST,tstrNT,tsepNTST)
 colnames(partable)<-c("Ne1BO","Ne2BO","Ne3BO","Ne4BO","NeST","Ne1NT","Ne2NT","MigBO","MigNT","Mig56","Mig65","Mig57","Mig75","MigSTNT","MigNTST","MigBOST","MigSTBO","NeancBO","rBO","NeancST","Neanc1NT","Neanc2NT","tsep4BO","BottDur","tbottend","tbotBO","tsepBOST","tStopMig","tBotNT","tBotST","tstrNT","tsepNTST")
 partablescaled<-cbind(sNe1BO,sNe2BO,sNe3BO,sNe4BO,sNeST,sNe1NT,sNe2NT,sMigBO,sMigNT,sMig56,sMig65,sMig57,sMig75,sMigSTNT,sMigNTST,sMigBOST,sMigSTBO,sNeancBO,rBO,sNeanc1NT,sNeanc2NT,sNeancST,stsep4BO,stbottend,stsepBOST,stStopMig,stBotNT,stBotST,ststrNT,stsepNTST)
-
 write.table(partable,paste(out,".1.param",sep=""),row.names=F,quote=F,sep="\t")
 write.table(partablescaled,paste(out,".1.paramscaled",sep=""),row.names=F,col.names=T,quote=F,sep="\t")
 
+#Output summary statistics: FDSS
 i<-1
 for (i in 1:nsims){	
 	s<-c()
