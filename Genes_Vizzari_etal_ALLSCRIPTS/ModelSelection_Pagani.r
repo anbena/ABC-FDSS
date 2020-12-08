@@ -1,4 +1,3 @@
-#Usage: Rscript --vanilla ./analysis_ecc.r <locuslength> <nrloci> <recrate> <nrchr>
 require(abcrf)
 args<-commandArgs(trailingOnly=TRUE)
 nsim<-100000
