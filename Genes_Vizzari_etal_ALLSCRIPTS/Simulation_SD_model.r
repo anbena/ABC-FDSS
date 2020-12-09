@@ -41,9 +41,11 @@ nloci<-as.numeric(args[3])#loci to simulate in each sim
 out<-paste(mod,"_ll",as.character(ll),"_nl",as.character(nloci),"_r",as.character(recomb),"_nc",nchr,sep="")
 
 #main param
-tbot<-2900
-stN<-85735
-stD<-67570
+tbot<-2900 #Duration Bottleneck
+stN<-85735 #Sample time Neandertal
+stD<-67570 #Sample time Denisova
+
+#Effective population sizes
 nAR<-sample(500:50000,nsims,replace=T)
 nD<-sample(500:50000,nsims,replace=T)
 nD1<-sample(500:50000,nsims,replace=T)
@@ -63,7 +65,7 @@ nDN<-sample(500:50000,nsims,replace=T)
 nADN<-sample(500:50000,nsims,replace=T)
 nAM<-sample(500:50000,nsims,replace=T)
 
-
+#Migration modern populations
 m79<-runif(nsims, 10^-6, 10^-3)*4*nAR
 m97<-runif(nsims, 10^-6, 10^-3)*4*nAR
 m910<-runif(nsims, 10^-6, 10^-3)*4*nAR
@@ -73,21 +75,25 @@ m1110<-runif(nsims, 10^-6, 10^-3)*4*nAR
 m1112<-runif(nsims, 10^-6, 10^-3)*4*nAR
 m1211<-runif(nsims, 10^-6, 10^-3)*4*nAR
 
+#Migration Eurasians
 m1_910<-runif(nsims, 10^-6, 10^-3)*4*nAR
 m1_109<-runif(nsims, 10^-6, 10^-3)*4*nAR
 m1_1012<-runif(nsims, 10^-6, 10^-3)*4*nAR
 m1_1210<-runif(nsims, 10^-6, 10^-3)*4*nAR
 
-rP<-1/runif(nsims,min=2,max=100)
-rEA<-1/runif(nsims,min=2,max=100)
-rG<-1/runif(nsims,min=2,max=100)
+#Bottleneck intensity
+rP<-1/runif(nsims,min=2,max=100) #Papua
+rEA<-1/runif(nsims,min=2,max=100) #Eurasia
+rG<-1/runif(nsims,min=2,max=100) #African Ghost
 
+#Divergence time Ancient lineages (Neanderthal, Denisova and Archaic)
 tdNNR<-110000
 tdDDR<-393000
 tdDN<-495000
 tdADN<-580000
 tdAM<-638000
 
+#Divergence time modern lineages
 tdYG<-sample(50000:145000,nsims,replace=T)
 tGbot<-(tdYG-tbot)
 tdGBE<-tGbot
@@ -101,31 +107,39 @@ tOAbot<-(tdOA-tbot)
 tdEA<-sample(30000:40000,nsims,replace=T)
 
 
+#Time and Rate Admixture events
+#Denisova-Asia
 taD2A<-samp_int_vec(20000,tdEA)
 paD2A<-runif(nsims, 10^-3, 10^-1)
 paD2A<-1-paD2A
 
+#Basal Europe-Europe
 taBEE<-samp_int_vec(10000,tdEA)
 paBEE<-runif(nsims, 0.05, 0.5)
 paBEE<-1-paBEE
 
+#Denisova-Papua
 taD1P<-samp_int_vec(30000,tOAbot)
 paD1P<-runif(nsims, 10^-3, 10^-1)
 paD1P<-1-paD1P
 
+#Archaic Papua
 taARP<-samp_vec_vec(taD1P,tOAbot)
 paARP<-runif(nsims, 10^-3, 10^-1)
 paARP<-1-paARP
 
+#Neanderthal-Asia
 taNEA<-samp_vec_vec(tdEA,tOAbot)
 paNEA<-runif(nsims, 10^-3, 10^-1)
 paNEA<-1-paNEA
 
+#Neanderthal-African Ghost
 taNG<-samp_vec_vec(tdOA,tmin)
 paNG<-runif(nsims, 10^-3, 10^-1)
 paNG<-1-paNG
 
-#param transformations
+#Parameters Scaled for ms
+
 tnAR<-4*nAR*mu*ll #theta
 
 snD<-nD*4*mu*ll/tnAR
@@ -172,6 +186,7 @@ tm1<-(tdEA/tgen)/(4*nAR)
 
 srec<-4*nAR*(recomb*(ll-1))
 
+#### OUTPUT PARAMETER's FILES
 partable<-cbind(nAR,nD,nD1,nD2,nN,nNR,nY,nG,nBE,nE,nA,nP,
                 nYG,nNNR,nDDR,nDN,nADN,nAM,
                 rYG,rGBE,rNNR,rDDR,rNDN,rADN,rAM,rP,rEA,rG,
@@ -188,6 +203,7 @@ partablescaled<-cbind(tnAR,snD,snD1,snD2,snN,snNR,snY,snG,snBE,snE,snA,snP,
 write.table(partable,paste(out,".param",sep=""),row.names=F,col.names=T,quote=F,sep="\t")
 write.table(partablescaled,paste(out,".paramscaled",sep=""),row.names=F,col.names=T,quote=F,sep="\t")
 
+#### Creation ms command line:
 i<-1
 for (i in 1:nsims){
 	s0<-c()
@@ -216,10 +232,10 @@ for (i in 1:nsims){
 	
 	s<-c()
 	s1<-c()
-	#Admixtures BasalEurope - Europe
+	#Admixture BasalEurope - Europe
 	s[1]<-paste(" -es ",as.character(staBEE[i])," 8 ",as.character(paBEE[i])," -ej ",as.character(staBEE[i]+0.000001)," IDPOP 10",sep="")
 	s1[1]<-staBEE[i]
-	#Admixtures DenisovaRelated 2 - Asia
+	#Admixture DenisovaRelated 2 - Asia
 	s[2]<-paste(" -es ",as.character(staD2A[i])," 4 ",as.character(paD2A[i])," -ej ",as.character(staD2A[i]+0.000001)," IDPOP 11",sep="")
 	s1[2]<-staD2A[i]
 	#Divergence time Europe-Asia
@@ -324,9 +340,9 @@ for (i in 1:nsims){
 	           as.character(ll),part0,part1,sep="")
 	
 	if(i==1){
-
-	 system(paste(li1," | ",cpd,"../compute_pd.py -np 6 -nc ",nchr," -w 30 -b 50 -s > ",out,".tab",sep=""))
+##### OUTPUT SUMMARY STATISTICS: FDSS
+	 system(paste(li1," | ",cpd,"../compute_pd.py -np 6 -nc ",nchr," -w 30 -b 100 -s > ",out,".tab",sep=""))
  }else{
-		 system(paste(li1," | ",cpd,"../compute_pd.py -np 6 -nc ",nchr," -w 30 -b 50 -s >> ",out,".tab",sep=""))
+		 system(paste(li1," | ",cpd,"../compute_pd.py -np 6 -nc ",nchr," -w 30 -b 100 -s >> ",out,".tab",sep=""))
 	 }
 }
