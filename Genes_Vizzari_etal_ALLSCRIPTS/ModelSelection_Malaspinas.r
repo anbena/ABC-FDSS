@@ -50,15 +50,15 @@ for (locusl in ll){
             next
           }
         }
-        s<-rbind(ooa_m1[(pods+1):nsim,],ooa_m2[(pods+1):nsim,])
+       
         t<-rbind(obs[[1]],obs[[2]],obs[[3]],obs[[4]],obs[[5]],obs[[6]],obs[[7]],obs[[8]],
                  obs[[9]],obs[[10]],obs[[11]],obs[[12]],obs[[13]],obs[[14]],obs[[15]],obs[[16]],
                  obs[[17]],obs[[18]],obs[[19]],obs[[20]],obs[[21]],obs[[22]],obs[[23]],obs[[24]],obs[[25]])
-				 
+	
+		#####Reference Table: simulated data
+	s<-rbind(ooa_m1[(pods+1):nsim,],ooa_m2[(pods+1):nsim,])			 
         i<-factor(c(rep(1,nsim-pods),rep(2,nsim-pods)))
-        f<-apply(s,2,var)!=0
-	      
-	       #####Reference Table: simulated data
+        f<-apply(s,2,var)!=0      
         da<-data.frame(i,s[,f])
 	      
 	       #####Training forest for model selection
