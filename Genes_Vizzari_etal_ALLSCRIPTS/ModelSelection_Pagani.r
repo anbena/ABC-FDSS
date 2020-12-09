@@ -61,7 +61,7 @@ for (locusl in ll){
         a<-abcrf(i~.,data=da,lda=T,ntree=ntrees,paral=T,ncores=10)
 		  
              #####Model selection based on observed data
- 	c<-predict(object=a,obs=t,training=da,ntree=ntrees,paral=T,paral.predict=T,ncores=10,ncores.predict=10)
+ 	c<-predict(object=a,obs=t[,f],training=da,ntree=ntrees,paral=T,paral.predict=T,ncores=10,ncores.predict=10)
 		
         write.table(a$model.rf$confusion.matrix,paste("modsel_pagani_ll",locusl,"_nl",nloci,"_r",rec,"_nc",cr,".confMatrix",sep=""))
         print(c)
