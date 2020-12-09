@@ -6,10 +6,10 @@ ntrees<-500
 fdir1<-"/ooa_m2/"
 fdir2<-"/observed/"
 
-ll<-as.character(args[1])
-nl<-args[2]
-r<-as.character(args[3])
-chr<-as.character(args[4])
+ll<-as.character(args[1]) #locus lenght
+nl<-args[2] #number of loci
+r<-as.character(args[3]) #recombination rate
+chr<-as.character(args[4]) #number of chromosomes per population
 
 parcomb<-length(ll)*length(nl)*length(r)*length(chr)
 pc<-c()
@@ -23,6 +23,8 @@ for (locusl in ll){
         print(paste("Parameter combination: ",as.character(q),"/",as.character(parcomb),sep=""))
         q<-1
         pc[q]<-paste("ll",locusl,"_nl",nloci,"_r",rec,"_nc",cr,sep="")
+	 
+	##### Parameters file
         name<-paste(fdir1,"ooa_m2","_ll",locusl,"_nl",nloci,"_r",rec,"_nc",cr,".param",sep="")
         print(name)
         if(file.exists(name)){
@@ -30,6 +32,7 @@ for (locusl in ll){
         }else{
           next
         }
+	#### Parameters scaled file
         name<-paste(fdir1,"ooa_m2","_ll",locusl,"_nl",nloci,"_r",rec,"_nc",cr,".paramscaled",sep="")
         print(name)
         if(file.exists(name)){
@@ -37,6 +40,8 @@ for (locusl in ll){
         }else{
           next
         }
+	      
+	#### Summary Statistics file: MD model
         name<-paste(fdir1,"ooa_m2","_ll",locusl,"_nl",nloci,"_r",rec,"_nc",cr,".tab",sep="")
         print(name)
         if(file.exists(name)){
@@ -51,6 +56,8 @@ for (locusl in ll){
         }else{
           next
         }
+	
+	#### OBSERVED SUMMARY STATISTICS FILES:
         o<-list()
         name<-paste(fdir2,"malaspinas/obs5_Malaspinas_2chr_500bp_10k.txt",sep="")
         print(name)
@@ -81,51 +88,55 @@ for (locusl in ll){
         colnames(ris3)<-c("Parameter","expectation","median","variance","variance.cdf",
                           "quantile90m","quantile90M","quantile50m","quantile50M")
        
-	    par.s<-par.t[((pods+1):(nsim)),]
+	par.s<-par.t[((pods+1):(nsim)),]
         f<-apply(sust,2,var)!=0
         Sust.s<-sust[((pods+1):(nsim)),f]
         data.obs<-sust[(1:pods),f]
         data.s<-list()
        
-	    p<-c()
+        p<-c()
+	#### Raference tables: one for each parameter
         for (i in 1:length(par.s)){
-          data.s[[i]]<-data.frame(par.s[i], Sust.s)
+        	data.s[[i]]<-data.frame(par.s[i], Sust.s)
         
-		  p[i]<-c(paste(col[i],"~.",sep=""))
+		p[i]<-c(paste(col[i],"~.",sep=""))
          
-   		  a<-regAbcrf(as.formula(p[i]),data=data.s[[i]],ntree=ntrees,paral=T,ncores=10)
-          
-		  c1<-predict(object=a,obs=obs,training=data.s[[i]],ntree=ntrees,quantiles=c(0.05, 0.95),
+		 #####RANDOM FOREST: Training forest for parameter estimation
+   		 a<-regAbcrf(as.formula(p[i]),data=data.s[[i]],ntree=ntrees,paral=T,ncores=10)
+          	
+		 #####RANDOM FOREST:Parameter estimation based on observed data
+		 c1<-predict(object=a,obs=obs,training=data.s[[i]],ntree=ntrees,quantiles=c(0.05, 0.95),
                       paral=T,paral.predict=T,ncores=5,ncores.predict=5)
-          c2<-predict(object=a,obs=obs,training=data.s[[i]],ntree=ntrees,quantiles=c(0.25, 0.75),
+         	 c2<-predict(object=a,obs=obs,training=data.s[[i]],ntree=ntrees,quantiles=c(0.25, 0.75),
                       paral=T,paral.predict=T,ncores=5,ncores.predict=5)
-					  
-          ris2[i,]<-c(col[i],c1$expectation[1],c1$med[1],c1$variance[1],c1$variance.cdf[1],
+		
+		
+		 ris2[i,]<-c(col[i],c1$expectation[1],c1$med[1],c1$variance[1],c1$variance.cdf[1],
                       c1$quantiles[1,1],c1$quantiles[1,2],c2$quantiles[1,1],c2$quantiles[1,2])
-          ris3[i,]<-c(col[i],c1$expectation[2],c1$med[2],c1$variance[2],c1$variance.cdf[2],
+        	 ris3[i,]<-c(col[i],c1$expectation[2],c1$med[2],c1$variance[2],c1$variance.cdf[2],
                       c1$quantiles[2,1],c1$quantiles[2,2],c2$quantiles[2,1],c2$quantiles[2,2])
           
-		  save(a,file=paste("./parametri/",col[i],".allen",sep=""))
-          
+          	 ##### PLOT POSTERIOR DENSITY: MALASPINAS
 		  pdf(file=(paste("./parametri/",col[i],"_mal_ooa_m2_ll",locusl,"_nl",nloci,"_r",rec,"_nc",cr,".pdf",sep="")))
-          densityPlot(object=a,obs=rbind(obs[1,],obs[1,]),training=data.s[[i]],
-                      xlab="",ylab="Density",main=paste("Posterior density of ",col[i]," Malaspinas",sep=""),
-                      paral=T,ncores=10)
-          abline(v=c1$expectation[1],col="red")
-          abline(v=c1$med[1],col="blue")
-          abline(h=1/(prior[i,2]-prior[i,1]),col="darkgreen",lty=5)
-          dev.off()
-         
+         		  densityPlot(object=a,obs=rbind(obs[1,],obs[1,]),training=data.s[[i]],
+                   	   xlab="",ylab="Density",main=paste("Posterior density of ",col[i]," Malaspinas",sep=""),
+                    	   paral=T,ncores=10)
+       			  abline(v=c1$expectation[1],col="red")
+          	 	  abline(v=c1$med[1],col="blue")
+          	 	  abline(h=1/(prior[i,2]-prior[i,1]),col="darkgreen",lty=5)
+                 dev.off()
+                 ##### PLOT POSTERIOR DENSITY: PAGANI
 		 pdf(file=(paste("./parametri/",col[i],"_pag_ooa_m2_ll",locusl,"_nl",nloci,"_r",rec,"_nc",cr,".pdf",sep="")))
-          densityPlot(object=a,obs=rbind(obs[2,],obs[2,]),training=data.s[[i]],
+       		      densityPlot(object=a,obs=rbind(obs[2,],obs[2,]),training=data.s[[i]],
                       xlab="",ylab="Density",main=paste("Posterior density of ",col[i]," Pagani",sep=""),
                       paral=T,ncores=10)
-          abline(v=c2$expectation[2],col="red")
-          abline(v=c2$med[2],col="blue")
-          abline(h=1/(prior[i,2]-prior[i,1]),col="darkgreen",lty=5)
-          dev.off()
-        
-		write.table(ris2,paste("ooa_m2_mal_ll",locusl,"_nl",nloci,"_r",rec,"_nc",cr,".summary",sep=""),
+         	      abline(v=c2$expectation[2],col="red")
+                      abline(v=c2$med[2],col="blue")
+                      abline(h=1/(prior[i,2]-prior[i,1]),col="darkgreen",lty=5)
+       		 dev.off()
+		
+         #####OUTPUT FILES PARAMETER ESTIMATIONS
+	  write.table(ris2,paste("ooa_m2_mal_ll",locusl,"_nl",nloci,"_r",rec,"_nc",cr,".summary",sep=""),
                       row.names=F,quote=F,sep="\t")
           write.table(ris3,paste("ooa_m2_pag_ll",locusl,"_nl",nloci,"_r",rec,"_nc",cr,".summary",sep=""),
                       row.names=F,quote=F,sep="\t")
