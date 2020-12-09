@@ -1,3 +1,5 @@
+#### SCRIPTS - SIMULATIONS MULTIPLE DISPERSAL MODEL
+
 samp_int_vec<-function(x=1,y=1:10){
 #x is an integer, y is a vector
 out<-c()
@@ -41,9 +43,11 @@ nloci<-as.numeric(args[3])#loci to simulate in each sim
 out<-paste(mod,"_ll",as.character(ll),"_nl",as.character(nloci),"_r",as.character(recomb),"_nc",nchr,sep="")
 
 #main param
-tbot<-2900
-stN<-85735
-stD<-67570
+tbot<-2900 #Duration Bottleneck
+stN<-85735 #Sample time Neandertal
+stD<-67570 #Sample time Denisova
+
+#Effective popultion sizes
 nAR<-sample(500:50000,nsims,replace=T)
 nD<-sample(500:50000,nsims,replace=T)
 nD1<-sample(500:50000,nsims,replace=T)
@@ -64,7 +68,7 @@ nDN<-sample(500:50000,nsims,replace=T)
 nADN<-sample(500:50000,nsims,replace=T)
 nAM<-sample(500:50000,nsims,replace=T)
 
-
+#Migration modern populations
 m78<-runif(nsims, 10^-6, 10^-3)*4*nAR
 m87<-runif(nsims, 10^-6, 10^-3)*4*nAR
 m810<-runif(nsims, 10^-6, 10^-3)*4*nAR
@@ -76,14 +80,17 @@ m1211<-runif(nsims, 10^-6, 10^-3)*4*nAR
 m1213<-runif(nsims, 10^-6, 10^-3)*4*nAR
 m1312<-runif(nsims, 10^-6, 10^-3)*4*nAR
 
+#Migrations Eurasia
 m1_1011<-runif(nsims, 10^-6, 10^-3)*4*nAR
 m1_1110<-runif(nsims, 10^-6, 10^-3)*4*nAR
 m1_1113<-runif(nsims, 10^-6, 10^-3)*4*nAR
 m1_1311<-runif(nsims, 10^-6, 10^-3)*4*nAR
 
-rP<-1/runif(nsims,min=2,max=100)
-rEA<-1/runif(nsims,min=2,max=100)
+#Bottleneck intensity
+rP<-1/runif(nsims,min=2,max=100) #Papua
+rEA<-1/runif(nsims,min=2,max=100) #Eurasia
 
+#Divergence time Ancient lineages (Neanderthal, Denisova and Archaic)
 tdNNR<-110000
 tdDDR<-393000
 tdDD1<-tdDDR
@@ -92,6 +99,7 @@ tdDN<-495000
 tdADN<-580000
 tdAM<-638000
 
+#Divergence time modern lineages
 tdYG<-sample(50000:145000,nsims,replace=T)
 tdYG1<-tdYG
 tdYG2<-tdYG
@@ -110,32 +118,38 @@ tOAbot2<-(tdOA2-tbot)
 
 tdEA<-samp_int_vec(30000,tOAbot2)
 
-
+#Time and Rate Admixture events
+#Denisova-Asia
 taD2A<-samp_int_vec(20000,tdEA)
 paD2A<-runif(nsims, 10^-3, 10^-1)
 paD2A<-1-paD2A
 
+#Basal Europe-Europe
 taBEE<-samp_int_vec(10000,tdEA)
 paBEE<-runif(nsims, 0.05, 0.5)
 paBEE<-1-paBEE
 
+#Denisova-Papua
 taD1P<-samp_int_vec(30000,tOAbot1)
 paD1P<-runif(nsims, 10^-3, 10^-1)
 paD1P<-1-paD1P
 
+#Archaic Papua
 taARP<-samp_vec_vec(taD1P,tOAbot1)
 paARP<-runif(nsims, 10^-3, 10^-1)
 paARP<-1-paARP
 
+#Neanderthal-Asia
 taNEA<-samp_vec_vec(tdEA,tOAbot2)
 paNEA<-runif(nsims, 10^-3, 10^-1)
 paNEA<-1-paNEA
 
+#Neanderthal-African Ghost
 taNG2<-samp_vec_vec(tdOA2,tmin)
 paNG2<-runif(nsims, 10^-3, 10^-1)
 paNG2<-1-paNG2
 
-#param transformations
+#Parameters Scaled for ms
 tnAR<-4*nAR*mu*ll #theta
 
 snD<-nD*4*mu*ll/tnAR
@@ -188,6 +202,7 @@ tm1<-(tdEA/tgen)/(4*nAR)
 
 srec<-4*nAR*(recomb*(ll-1))
 
+#### OUTPUT PARAMETER's FILES
 partable<-cbind(nAR,nD,nD1,nD2,nN,nNR,nY,nG1,nG2,nBE,nE,nA,nP,
                 nYG,nNNR,nDDR,nDN,nADN,nAM,
                 rYG,rNNR,rDDR,rNDN,rADN,rAM,rP,rEA,
@@ -203,6 +218,7 @@ partablescaled<-cbind(tnAR,snD,snD1,snD2,snN,snNR,snY,snG1,snG2,snBE,snE,snA,snP
 write.table(partable,paste(out,".param",sep=""),row.names=F,col.names=T,quote=F,sep="\t")
 write.table(partablescaled,paste(out,".paramscaled",sep=""),row.names=F,col.names=T,quote=F,sep="\t")
 
+#### Creation ms command line:
 i<-1
 for (i in 1:nsims){
 	s0<-c()
@@ -349,7 +365,7 @@ for (i in 1:nsims){
 	li1<-paste(ms," ",as.character(4*as.numeric(nchr))," ",
 	           as.character(nloci)," -t ",as.character(tnAR[i])," -r ",as.character(srec[i])," ",
 	           as.character(ll),part0,part1,sep="")
-	
+	##### OUTPUT SUMMARY STATISTICS: FDSS
 	if (i==1){
 		system(paste(li1," | ",cpd,"../compute_pd.py -np 6 -nc ",nchr," -w 30 -b 50 -s > ",out,".tab",sep=""))
 	}else{
